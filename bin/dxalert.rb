@@ -19,8 +19,8 @@ def create_callfile
 	callfile = <<~CALLFILE
 		Channel: SIP/voipms/4153140314
 		CallerID: "(dx)ALERT" <8056667111>
-		MaxRetries: 3
-		RetryTime: 8
+		MaxRetries: 10
+		RetryTime: 5
 		Context: dxalert
 		Extension: 1
 	CALLFILE
