@@ -1,5 +1,7 @@
 CREATE TABLE alerts (
+	id VARCHAR(3) NOT NULL,
 	url VARCHAR(255) NOT NULL,
 	hash VARCHAR(128),
-	PRIMARY KEY (url)
+	PRIMARY KEY (url),
+	UNIQUE KEY (id)
 );
