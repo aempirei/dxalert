@@ -9,7 +9,7 @@ require 'fileutils'
 PROGRAM = File.basename($0,'.rb')
 
 if ARGV.empty?
-	print "\nusage: #{File.basename $0} (id bitcoin_address)...\n\n"
+	print "\nusage: #{File.basename $0} (id telephone bitcoin_address)...\n\n"
 	exit
 end
 
@@ -28,9 +28,9 @@ def mkurl(address)
 	return "https://blockchain.info/q/getreceivedbyaddress/#{address}?confirmations=1"
 end
 
-ARGV.each_slice(2) do |id,address|
+ARGV.each_slice(3) do |id,telephone,address|
 	url = mkurl address
-	update = db.prepare('INSERT IGNORE INTO alerts (id,url) VALUES (?,?)')
-	update.execute(id,url)
+	update = db.prepare('INSERT IGNORE INTO alerts (id,callback,url) VALUES (?,?,?)')
+	update.execute(id,telephone,url)
 	logger.info "adding alert id=#{id} url=#{url}"
 end

@@ -1,5 +1,6 @@
 CREATE TABLE alerts (
 	id VARCHAR(3) NOT NULL,
+	callback VARCHAR(10) NOT NULL,
 	url VARCHAR(255) NOT NULL,
 	hash VARCHAR(128),
 	PRIMARY KEY (url),
