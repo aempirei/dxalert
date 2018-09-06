@@ -6,6 +6,7 @@ $USER = $usermatch[1];
 $BASEPATH = realpath(__DIR__.'/../..');
 
 unset($usermatch);
+require 'config.php';
 
 header('Pragma: no-cache');
 
@@ -15,10 +16,12 @@ if ($DB->connect_errno) {
 }
 
 function send_sms($from, $to, $message) {
+	global $API_USERNAME;
+	global $API_PASSWORD;
 	$baseurl="https://voip.ms/api/v1/rest.php";
 	$method = "sendSMS";
-	$username = urlencode('aempirei++@gmail.com');
-	$password = "API4satan";
+	$username = urlencode($API_USERNAME);
+	$password = urlencode($API_PASSWORD);
 	$message = urlencode($message);
 	$url = "$baseurl?api_username=$username&api_password=$password&method=$method&did=$from&dst=$to&message=$message";
 	$resp = file_get_contents($url);

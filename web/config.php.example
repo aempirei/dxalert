@@ -1,0 +1,11 @@
+<?php
+
+preg_match('/^\/home\/([^\/]*)/', getcwd(), $usermatch);
+
+$USER = $usermatch[1];
+$BASEPATH = realpath(__DIR__.'/../..');
+
+unset($usermatch);
+
+$API_USERNAME = 'username@domain.com';
+$API_PASSWORD = 'password';
