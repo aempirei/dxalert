@@ -24,8 +24,55 @@ $rows = array();
 while(($row = $results->fetch_array(MYSQLI_NUM)))
 	$rows[] = $row;
 
-$data = array('columns' => $columns, 'rows' => $rows);
+?>
+<html><head>
+<title>(dx)Alert</title>
+<style>
+table {
+border: 0;
+border-collapse: collapse;
+}
+th {
+/*border-bottom: 1px solid black;*/
+background-color:lightgray;
+}
+td {
+padding: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+td:nth-child(odd) {
+background-color: whitesmoke;
+}
+td:nth-child(even) {
+background-color: white;
+}
+h1 {
+padding-top: 0;
+margin-top: 0;
+}
+div {
+padding: 15px;
+}
+</style>
+</head>
+<body>
+<div><h1>(dx)Alert</h1><p>Here are your alerts.</p>
+<table>
+<?php
 
-header('Content-Type: application/json');
+echo '<tr>';
+for($x = 0; $x < sizeof($columns); $x++)
+	echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
+echo "</tr>\n";
 
-echo json_encode($data,JSON_PRETTY_PRINT);
+foreach($rows as $row) {
+	echo '<tr>';
+	for($x = 0; $x < sizeof($columns); $x++)
+		echo '<td>'.htmlspecialchars($row[$x]).'</td>';
+	echo "</tr>\n";
+}
+
+?>
+</table>
+</body></html>
