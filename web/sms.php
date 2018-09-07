@@ -50,8 +50,9 @@ case 'btc':
 	break;
 default:
 	$resp = send_sms($to, $from, "Sorry, I don't understand \"$method\".");
-	http_response_code(501);
+	echo 'ok';
 	exit;
+
 }
 
 $resp = send_sms($to, $from, 'thank you for your request; your id is '.$id.'.');
