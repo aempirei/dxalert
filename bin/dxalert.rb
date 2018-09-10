@@ -12,12 +12,12 @@ logger = Logger.new(STDOUT)
 logger.progname = PROGRAM
 logger.formatter = proc { |s,d,p,m| "[#{d}] #{s} #{p}: #{m}\n" }
 
-def create_callfile(id)
+def create_callfile(id,to)
 	filename = '/tmp/dxalert.callfile'
 	file = File.new(filename,'w')
 
 	callfile = <<~CALLFILE
-		Channel: SIP/voipms/4153140314
+		Channel: SIP/voipms/#{to}
 		CallerID: "(dx)ALERT" <8056660000>
 		MaxRetries: 10
 		RetryTime: 5
@@ -43,6 +43,7 @@ end
 db.query('SELECT * FROM alerts', as: :hash, symbolize_keys: true).each do |alert|
 	uri = URI(alert[:url])
 	id = alert[:id]
+	to = alert[:callback]
 	resp = Net::HTTP.get(uri)
 	hash = Digest::SHA256.hexdigest(resp)
 	update = db.prepare("UPDATE alerts SET hash=? WHERE url=?")
@@ -55,7 +56,7 @@ db.query('SELECT * FROM alerts', as: :hash, symbolize_keys: true).each do |alert
 		else
 			logger.info "hash changed for alert id=#{id} url=#{uri} hash.new=#{hash} hash.old=#{alert[:hash]}"
 			update.execute(hash,alert[:url])
-			create_callfile(id)
+			create_callfile(id,to)
 		end
 	end
 end
