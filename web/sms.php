@@ -38,7 +38,7 @@ foreach($required as $key) {
 	$$key = $_REQUEST[$key];
 }
 
-$options = explode(' ', $message);
+$options = preg_split('/\s+/', $message);
 $method = strtolower(array_shift($options));
 
 switch($method) {
@@ -50,6 +50,7 @@ case 'btc':
 	break;
 default:
 	$resp = send_sms($to, $from, "Sorry, I don't understand \"$method\".");
+case 'thanks':
 	echo 'ok';
 	exit;
 
