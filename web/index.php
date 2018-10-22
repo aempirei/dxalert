@@ -61,6 +61,14 @@ padding: 15px;
 <table>
 <?php
 
+function format($column, $data) {
+	if($column == 'url') {
+		return '<a href="'.$data.'">'.htmlspecialchars($data).'</a>';
+	} else {
+		return htmlspecialchars($data);
+	}
+}
+
 echo '<tr>';
 for($x = 0; $x < sizeof($columns); $x++)
 	echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
@@ -69,7 +77,7 @@ echo "</tr>\n";
 foreach($rows as $row) {
 	echo '<tr>';
 	for($x = 0; $x < sizeof($columns); $x++)
-		echo '<td>'.htmlspecialchars($row[$x]).'</td>';
+		echo '<td>'.format($columns[$x],$row[$x]).'</td>';
 	echo "</tr>\n";
 }
 
