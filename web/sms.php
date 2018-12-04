@@ -49,11 +49,19 @@ case 'btc':
 	$id = strtoupper(substr(hash('md5',$url),0,3));
 	break;
 default:
-	$resp = send_sms($to, $from, "Sorry, I don't understand \"$method\".");
-case 'thanks':
+	$sql = 'INSERT INTO sms (`from`,`to`,`message`) VALUES (?,?,?)';
+	try {
+		$statement = $DB->prepare($sql);
+		$statement->bind_param('sss', $from, $to, $message);
+		$statement->execute();
+		$statement->close();
+	} catch(Exception $e) {
+		echo $e->getMessage();
+		http_response_code(500);
+		exit;
+	}
 	echo 'ok';
 	exit;
-
 }
 
 $resp = send_sms($to, $from, 'thank you for your request; your id is '.$id.'.');
