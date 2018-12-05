@@ -12,17 +12,31 @@ if ($DB->connect_errno) {
 	die("Failed to connect to MySQL: ".$DB->connect_error);
 }
 
-$sql = 'SELECT * FROM alerts';
+function sqlgo($sql) {
 
-$results = $DB->query($sql);
+	$results = $DB->query($sql);
 
-$fields = $results->fetch_fields();
-$columns = array_map(function($f) { return $f->name; }, $fields);
+	$fields = $results->fetch_fields();
+	$columns = array_map(function($f) { return $f->name; }, $fields);
 
-$rows = array();
+	$rows = array();
 
-while(($row = $results->fetch_array(MYSQLI_NUM)))
-	$rows[] = $row;
+	while(($row = $results->fetch_array(MYSQLI_NUM)))
+		$rows[] = $row;
+
+	return array($columns,$rows);
+}
+
+$alertrs = sqlgo('SELECT * FROM alerts');
+$smsrs = sqlgo('SELECT * FROM sms');
+
+function format($column, $data) {
+	if($column == 'url') {
+		return '<a href="'.$data.'">'.htmlspecialchars($data).'</a>';
+	} else {
+		return htmlspecialchars($data);
+	}
+}
 
 ?>
 <html><head>
@@ -57,17 +71,17 @@ padding: 15px;
 </style>
 </head>
 <body>
-<div><h1>(dx)Alert</h1><p>Here are your alerts.</p>
+
+<div><h1>(dx)Alert</h1>
+
+<!-- A L E R T S --!>
+<p>Here are your alerts.</p>
+
 <table>
 <?php
 
-function format($column, $data) {
-	if($column == 'url') {
-		return '<a href="'.$data.'">'.htmlspecialchars($data).'</a>';
-	} else {
-		return htmlspecialchars($data);
-	}
-}
+$columns = $alertrs[0];
+$rows = $alertrs[1];
 
 echo '<tr>';
 for($x = 0; $x < sizeof($columns); $x++)
@@ -83,4 +97,31 @@ foreach($rows as $row) {
 
 ?>
 </table>
+
+<!-- S M S --!>
+<p>Here are the text messages.</p>
+
+<table>
+<?php
+
+$columns = $smsrs[0];
+$rows = $smsrs[1];
+
+echo '<tr>';
+for($x = 0; $x < sizeof($columns); $x++)
+	echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
+echo "</tr>\n";
+
+foreach($rows as $row) {
+	echo '<tr>';
+	for($x = 0; $x < sizeof($columns); $x++)
+		echo '<td>'.format($columns[$x],$row[$x]).'</td>';
+	echo "</tr>\n";
+}
+
+?>
+</table>
+
+</div>
+
 </body></html>
