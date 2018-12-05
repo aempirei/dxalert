@@ -14,6 +14,8 @@ if ($DB->connect_errno) {
 
 function sqlgo($sql) {
 
+	global $DB;
+
 	$results = $DB->query($sql);
 
 	$fields = $results->fetch_fields();
@@ -27,15 +29,29 @@ function sqlgo($sql) {
 	return array($columns,$rows);
 }
 
-$alertrs = sqlgo('SELECT * FROM alerts');
-$smsrs = sqlgo('SELECT * FROM sms');
-
 function format($column, $data) {
 	if($column == 'url') {
 		return '<a href="'.$data.'">'.htmlspecialchars($data).'</a>';
 	} else {
 		return htmlspecialchars($data);
 	}
+}
+
+function show_data($columns,$rows) {
+
+	echo '<table>';
+	echo '<tr>';
+	for($x = 0; $x < sizeof($columns); $x++)
+		echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
+	echo "</tr>\n";
+
+	foreach($rows as $row) {
+		echo '<tr>';
+		for($x = 0; $x < sizeof($columns); $x++)
+			echo '<td>'.format($columns[$x],$row[$x]).'</td>';
+		echo "</tr>\n";
+	}
+	echo '</table>';
 }
 
 ?>
@@ -72,55 +88,17 @@ padding: 15px;
 </head>
 <body>
 
-<div><h1>(dx)Alert</h1>
+<div>
+
+<h1>(dx)Alert</h1>
 
 <!-- A L E R T S --!>
-<p>Here are your alerts.</p>
-
-<table>
-<?php
-
-$columns = $alertrs[0];
-$rows = $alertrs[1];
-
-echo '<tr>';
-for($x = 0; $x < sizeof($columns); $x++)
-	echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
-echo "</tr>\n";
-
-foreach($rows as $row) {
-	echo '<tr>';
-	for($x = 0; $x < sizeof($columns); $x++)
-		echo '<td>'.format($columns[$x],$row[$x]).'</td>';
-	echo "</tr>\n";
-}
-
-?>
-</table>
+<p>Here are the alerts.</p>
+<?php call_user_func_array('show_data', sqlgo('SELECT * FROM alerts')); ?>
 
 <!-- S M S --!>
 <p>Here are the text messages.</p>
-
-<table>
-<?php
-
-$columns = $smsrs[0];
-$rows = $smsrs[1];
-
-echo '<tr>';
-for($x = 0; $x < sizeof($columns); $x++)
-	echo '<th>'.htmlspecialchars($columns[$x]).'</th>';
-echo "</tr>\n";
-
-foreach($rows as $row) {
-	echo '<tr>';
-	for($x = 0; $x < sizeof($columns); $x++)
-		echo '<td>'.format($columns[$x],$row[$x]).'</td>';
-	echo "</tr>\n";
-}
-
-?>
-</table>
+<?php call_user_func_array('show_data', sqlgo('SELECT * FROM sms')); ?>
 
 </div>
 
