@@ -48,6 +48,12 @@ case 'btc':
 	$url = 'https://blockchain.info/q/getreceivedbyaddress/'.$address.'?confirmations=1';
 	$id = strtoupper(substr(hash('md5',$url),0,3));
 	break;
+case 'litecoin':
+case 'ltc':
+	$address = array_shift($options);
+	$url = 'https://api.blockcypher.com/v1/ltc/main/addrs/'.$address.'/balance';
+	$id = strtoupper(substr(hash('md5',$url),0,3));
+	break;
 default:
 	$sql = 'INSERT INTO sms (`from`,`to`,`message`) VALUES (?,?,?)';
 	try {
